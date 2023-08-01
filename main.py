@@ -10,5 +10,9 @@ print(current_month - 6)
 
 response = requests.get(url)
 soup = BeautifulSoup(response.content, "html.parser")
-country = soup.find_all('a[href="javascript://"]')[1]
+name = soup.find('div.tipstername').text
+trs = soup.find_all('div#bymonth table tbody tr')
+for tr in trs:
+    print(tr.find('td').text)
+country = soup.find_all('a[href="javascript://"]')
 print(country.text)
