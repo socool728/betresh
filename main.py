@@ -12,9 +12,9 @@ import time
 from openpyxl import Workbook
 
 # https://www.betrush.com/pick,Capalaba_Women_vs_Lions_Women,219834.html
-url = 'https://www.betrush.com/tipster,1477.html'
+# url = 'https://www.betrush.com/tipster,1477.html'
 
-# url = input("Enter URL: ")
+url = input("Enter URL: ")
 current_month = datetime.datetime.now().month
 current_year = datetime.datetime.now().year
 
@@ -54,7 +54,9 @@ for link in links:
     # Extract the date from the span text
     country = span_text.split('\n')[0].split(" ")[1]
     event_date = span_text.split('\n')[1].split(": ")[1]
-    event_name = driver.find_element(By.TAG_NAME, 'h1').text
+    stake = span_text.split('\n')[3].split(": ")[1]
+    event_name = driver.find_element(By.TAG_NAME, 'h1').text.split('(')[0]
+    out_come = driver.find_element(By.TAG_NAME, 'h1').text.split('(')[1].split(")")[0]
     pick = driver.find_element(By.CSS_SELECTOR, 'span.pick_bookie').text.split('\n')[0].split(": ")[1]
     data.append({
         "sport": "Football",
@@ -66,14 +68,16 @@ for link in links:
         'combopick': 'TBC',
         'formula': f'=IF(OR(ISNUMBER(SEARCH($C${data_num}, D{data_num}))=1, ISNUMBER(SEARCH($C${data_num}, G{data_num}))=1), E{data_num} & G{data_num}, ""',
         'time_stamp': 'TBC',
-        'closing_odd': 'TBC'
+        'closing_odd': 'TBC',
+        "stake": stake,
+        'out_come': out_come
     })
     data_num = data_num + 1
         
 wb = Workbook()
 ws = wb.active
-ws.append(["Sport", "Country", "URL", "Pick", "Event Name", "Event Date", "Combo Pick", "Formula", "Time Stamp", "Closing Odd"])
+ws.append(["Sport", "Country", "URL", "Pick", "Combo Pick", "Event Date", "Event Name", "Formula", "Time Stamp", "Closing Odd", "Stake","Out Come"])
 for data_simple in data:
-    newData =[ data_simple["sport"], data_simple["country"], data_simple["URL"], data_simple["pick"], data_simple["event_name" ], data_simple["event_date" ], data_simple["combopick" ], data_simple["formula"], data_simple["time_stamp"], data_simple["closing_odd"]]
+    newData =[ data_simple["sport"], data_simple["country"], data_simple["URL"], data_simple["pick"], data_simple["combopick" ], data_simple["event_date" ], data_simple["event_name" ], data_simple["formula"], data_simple["time_stamp"], data_simple["closing_odd"], data_simple["stake"], data_simple["out_come"]]
     ws.append(newData)
 wb.save(f"{name}.xlsx")
